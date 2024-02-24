@@ -1,3 +1,4 @@
+from django.http import Http404
 from django.shortcuts import render
 
 posts = [
@@ -44,19 +45,22 @@ posts = [
 ]
 
 
-def index(request):  # Представление страницы блога от новых к старым постам
-    template = 'blog/index.html'
+def index(request):
+    """Представление страницы блога от новых к старым постам"""
     context = {'posts_for_site': reversed(posts)}
-    return render(request, template, context)
+    return render(request, 'blog/index.html', context)
 
 
-def post_detail(request, post_id):  # Педставление страницы поста
-    template = 'blog/detail.html'
-    context = {'post': posts[post_id]}
-    return render(request, template, context)
+def post_detail(request, post_id):
+    """Педставление страницы поста"""
+    try:
+        context = {'post': posts[post_id]}
+        return render(request, 'blog/detail.html', context)
+    except IndexError:
+        raise Http404('Страница не найдена!')
 
 
-def category_posts(request, category_slug):  # Представление категории поста
-    template = 'blog/category.html'
+def category_posts(request, category_slug):
+    """Представление категории поста"""
     context = {'slug': category_slug}
-    return render(request, template, context)
+    return render(request, 'blog/category.html', context)
